@@ -84,7 +84,6 @@ function pagespeed_insight_analyze_form($form, &$form_state) {
     '#attributes' => array(
       'placeholder' => t('Enter a web page URL'),
     ),
-    '#element_validate' => array('pagespeed_insight_analyze_form_url_validate'),
   );
 
   $form['actions'] = array('#type' => 'actions');
@@ -101,13 +100,6 @@ function pagespeed_insight_analyze_form($form, &$form_state) {
   );
 
   return $form;
-}
-
-function pagespeed_insight_analyze_form_url_validate($element, &$form_state, $form) {
-  $url = $element['#value'];
-  if (!valid_url($url, TRUE) && valid_url($url, FALSE)) {
-    $form_state['values']['url'] = 'http://' . $url;
-  }
 }
 
 function pagespeed_insight_analyze_form_submit($form, &$form_state) {
@@ -132,18 +124,28 @@ function pagespeed_insight_analyze_form_submit_ajax($form, &$form_state) {
       $data = $cache->data;
     }
     else {
+      $i = 0;
       do {
+        $i++;
         $data = pagespeed_insight_analyze($url);
-      } while (isset($data['error']));
-
-      cache_set('pagespeed_insight:' . $url, $data, 'cache', REQUEST_TIME + 30);
+      } while (isset($data['error']) && $i < 7);
     }
 
-    $result = pagespeed_insight_analyze_result($data);
-    $commands = array(
-      ajax_command_html('#block-system-main', drupal_render($form)),
-      ajax_command_after('#pagespeed-insight-analyze-form', drupal_render($result)),
-    );
+    if (isset($data['error'])) {
+      $commands = array(
+        ajax_command_html('#block-system-main', drupal_render($form)),
+        ajax_command_alert($data['error']['message']),
+      );
+    }
+    else {
+      cache_set('pagespeed_insight:' . $url, $data, 'cache', REQUEST_TIME + 30);
+
+      $result = pagespeed_insight_analyze_result($data);
+      $commands = array(
+        ajax_command_html('#block-system-main', drupal_render($form)),
+        ajax_command_after('#pagespeed-insight-analyze-form', drupal_render($result)),
+      );
+    }
 
     return array('#type' => 'ajax', '#commands' => $commands);
   }
