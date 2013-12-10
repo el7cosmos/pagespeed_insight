@@ -84,6 +84,7 @@ function pagespeed_insight_analyze_form($form, &$form_state) {
     '#attributes' => array(
       'placeholder' => t('Enter a web page URL'),
     ),
+    '#element_validate' => array('pagespeed_insight_analyze_form_url_validate'),
   );
 
   $form['actions'] = array('#type' => 'actions');
@@ -100,6 +101,13 @@ function pagespeed_insight_analyze_form($form, &$form_state) {
   );
 
   return $form;
+}
+
+function pagespeed_insight_analyze_form_url_validate($element, &$form_state, $form) {
+  $url = $element['#value'];
+  if (!valid_url($url, TRUE) && valid_url($url, FALSE)) {
+    $form_state['values']['url'] = 'http://' . $url;
+  }
 }
 
 function pagespeed_insight_analyze_form_submit($form, &$form_state) {
