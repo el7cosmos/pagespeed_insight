@@ -1,0 +1,3 @@
+name = PageSpeed Insights
+description = Page Speed Insights measures the performance of a page for mobile devices and desktop devices. It fetches the url twice, once with a mobile user-agent, and once with a desktop-user agent.
+core = 7.x
