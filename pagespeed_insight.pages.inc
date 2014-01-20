@@ -18,6 +18,7 @@ function pagespeed_insight_page($url = NULL) {
       'id' => 'result',
     ),
   );
+
   if (!is_null($url)) {
     $data = pagespeed_insight_analyze($url);
     if (empty($data['error'])) {

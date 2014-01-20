@@ -32,6 +32,7 @@ function pagespeed_insight_theme($existing, $type, $theme, $path) {
     'pagespeed_insight_stats' => array(
       'variables' => array(
         'stats' => NULL,
+        'data_stats' => NULL,
       ),
     ),
     'pagespeed_insight_rule' => array(
@@ -170,6 +171,7 @@ function pagespeed_insight_analyze_result($data) {
   );
 
   $stats = array();
+
   if (!empty($data['pageStats']['htmlResponseBytes'])) {
     $stats[] = array(
       'value' => intval($data['pageStats']['htmlResponseBytes']),
@@ -197,13 +199,13 @@ function pagespeed_insight_analyze_result($data) {
   if (!empty($data['pageStats']['flashResponseBytes'])) {
     $stats[] = array(
       'value' => intval($data['pageStats']['flashResponseBytes']),
-      'color' => '#222222',
+      'color' => '#333333',
     );
   }
   if (!empty($data['pageStats']['textResponseBytes'])) {
     $stats[] = array(
       'value' => intval($data['pageStats']['textResponseBytes']),
-      'color' => '#5bc0de',
+      'color' => '#d9534f',
     );
   }
   if (!empty($data['pageStats']['otherResponseBytes'])) {
@@ -212,18 +214,14 @@ function pagespeed_insight_analyze_result($data) {
       'color' => '#999999',
     );
   }
+
   $result['stats'] = array(
     '#theme' => 'pagespeed_insight_stats',
     '#stats' => $data['pageStats'],
+    '#data_stats' => drupal_json_encode($stats),
     '#attached' => array(
       'js' => array(
         libraries_get_path('Chart.js') . '/Chart.js',
-        array(
-          'data' => array(
-            'pageSpeedInsight' => $stats,
-          ),
-          'type' => 'setting',
-        ),
       ),
     ),
   );
