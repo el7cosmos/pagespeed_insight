@@ -103,6 +103,8 @@ function pagespeed_insight_analyze_form($form, &$form_state) {
     ),
   );
 
+  $form['#attached']['js'][] = libraries_get_path('Chart.js') . '/Chart.js';
+
   return $form;
 }
 
@@ -219,11 +221,6 @@ function pagespeed_insight_analyze_result($data) {
     '#theme' => 'pagespeed_insight_stats',
     '#stats' => $data['pageStats'],
     '#data_stats' => drupal_json_encode($stats),
-    '#attached' => array(
-      'js' => array(
-        libraries_get_path('Chart.js') . '/Chart.js',
-      ),
-    ),
   );
 
   $rules = $data['formattedResults']['ruleResults'];
