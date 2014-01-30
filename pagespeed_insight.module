@@ -60,16 +60,9 @@ function pagespeed_insight_analyze($url) {
     'prettyprint' => 'false',
     'url' => $url,
     'locale' => $GLOBALS['language']->language,
-    'screenshot' => 'true',
-  );
-  $options = array(
-    'headers' => array(
-      'Accept-Encoding' => 'gzip',
-      'User-Agent' => 'eL Abee (+http://elabee.me)',
-    ),
   );
 
-  $response = drupal_http_request(url($api_url, array('query' => $query)), $options);
+  $response = drupal_http_request(url($api_url, array('query' => $query)));
   return drupal_json_decode($response->data);
 }
 
@@ -139,11 +132,7 @@ function pagespeed_insight_analyze_form_submit_ajax($form, &$form_state) {
       $data = $cache->data;
     }
     else {
-      $i = 0;
-      do {
-        $i++;
-        $data = pagespeed_insight_analyze($url);
-      } while (isset($data['error']) && $i < 7);
+      $data = pagespeed_insight_analyze($url);
     }
 
     if (isset($data['error'])) {
